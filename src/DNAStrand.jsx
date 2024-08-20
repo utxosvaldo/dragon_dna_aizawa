@@ -73,7 +73,7 @@ export default function DNAStrand(){
         //     basePair.position.z = ((status.clock.elapsedTime % t) * l) / t; 
         // }
         // console.log(base)
-        console.log(status.camera.position)
+        // console.log(status.camera.position)
     })
 
 

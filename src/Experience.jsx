@@ -48,7 +48,7 @@ export default function Experience()
                 <meshBasicMaterial color={'blue'} />
             </Sphere>
 
-            <Sphere position={[0, 0, 0.5]} scale={1.5}>
+            <Sphere position={[0, 0, 0.5]} scale={1.5} rotation={[Math.PI/2,0,0]}>
                 <meshBasicMaterial color={'red'} wireframe/>
             </Sphere>
 

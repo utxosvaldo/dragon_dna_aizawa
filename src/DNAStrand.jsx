@@ -67,12 +67,13 @@ export default function DNAStrand(){
     useFrame((status, delta) => {
         strandGroup.current.rotation.z += wZ * delta
 
-        // const z = ((status.clock.elapsedTime % t) * l / t) 
-        // base.current.position.z = z 
+        const z = ((status.clock.elapsedTime % t) * l / t) 
+        base.current.position.z = z 
         // for(const basePair of bases.current){
         //     basePair.position.z = ((status.clock.elapsedTime % t) * l) / t; 
         // }
-        console.log(base)
+        // console.log(base)
+        console.log(status.camera.position)
     })
 
 
@@ -84,7 +85,7 @@ export default function DNAStrand(){
                 <Line points={strandBPoints} color={'red'} />
             </group>
 
-            <Line ref={base} points={basePairs[6]} lineWidth={7} color={'green'} />
+            <Line ref={base} points={basePairs[0]} lineWidth={7} color={'green'} />
             {/* <lineGeometry ref={setLineGeometry} /> */}
 
             {/* {[...Array(10)].map((value, index) => (

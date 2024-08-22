@@ -1,4 +1,4 @@
-import { Line } from "@react-three/drei";
+import { Line, Sphere } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import { Line3 } from "three";
@@ -7,6 +7,7 @@ export default function DNAStrand(){
 
 
     const [lineGeometry, setLineGeometry] = useState();
+    const baseASphere = useRef()
 
     const t = 5 // tiempo en recorrer de un lado a otro
     const n = 200 // segmentos de linea para las helices
@@ -38,10 +39,10 @@ export default function DNAStrand(){
         ];
     });
 
-    const basePoints = [
-        strandAPoints[0],
-        strandBPoints[0]
-    ]
+    // const basePoints = [
+    //     strandAPoints[0],
+    //     strandBPoints[0]
+    // ]
 
     const basePairs = [...Array(nBases)].map((value, index) => {
         const strandAPoint = [
@@ -60,15 +61,19 @@ export default function DNAStrand(){
 
     const strandGroup = useRef()
     const base = useRef()
-    const bases = useRef([])
+    // const bases = useRef([])
     // const baseGroup = useRef()
 
     const wZ = 2 * Math.PI  * nGroves/t
     useFrame((status, delta) => {
         strandGroup.current.rotation.z += wZ * delta
 
-        // const z = ((status.clock.elapsedTime % t) * l / t) 
-        // base.current.position.z = z 
+        const z = ((status.clock.elapsedTime % t) * l / t) 
+        base.current.position.z = z 
+
+        baseASphere.current.position.z = base.current.position.z +z0;
+
+        console.log(base.current.position.z, baseASphere.current.position.z);
 
         // for(const basePair of bases.current){
         //     basePair.position.z = ((status.clock.elapsedTime % t) * l) / t; 
@@ -86,7 +91,23 @@ export default function DNAStrand(){
                 <Line points={strandBPoints} color={'red'} />
             </group>
 
-            {/* <Line ref={base} points={basePairs[0]} lineWidth={7} color={'green'} /> */}
+            <Line
+                ref={base}
+                points={basePairs[0]}
+                lineWidth={7}
+                color={'green'}
+            />
+            <Sphere
+                ref={baseASphere}
+                position={[
+                    (basePairs[0][0][0] * 3) / 4 + basePairs[0][1][0] / 4,
+                    (basePairs[0][0][1] * 3) / 4 + basePairs[0][1][1] /4,
+                    basePairs[0][0][2]
+                ]}
+                scale={[0.01, 0.01, 0.01]}
+            >
+                <meshBasicMaterial color={'red'} />
+            </Sphere>
             {/* <lineGeometry ref={setLineGeometry} /> */}
 
             {/* {[...Array(10)].map((value, index) => (
@@ -104,8 +125,6 @@ export default function DNAStrand(){
                     <meshStandardMaterial color='black' />
                 </mesh>
             ))} */}
-
-            
         </>
     );
 }

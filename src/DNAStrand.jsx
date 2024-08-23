@@ -52,7 +52,7 @@ export default function DNAStrand(){
 
     const t = 10 // tiempo en recorrer de un lado a otro
     const n = 200 // segmentos de linea para las helices
-    const l = 2 // longitud a recorrer
+    const l = 2.5 // longitud a recorrer
     const nGroves = 10 // numero de groves 
 
     const nBases = 10 * nGroves // Number of base pairs total along L
@@ -62,7 +62,7 @@ export default function DNAStrand(){
     const alpha = 0
     const beta = 2.4
     const v = l/n
-    const z0 = -0.5
+    const z0 = -0.6
 
     // rotational velocity of dna strand
     const wZ = 0.7 * (2 * Math.PI * nGroves) / t  ;

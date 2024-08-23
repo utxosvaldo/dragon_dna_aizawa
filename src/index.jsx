@@ -12,9 +12,11 @@ root.render(
             near: 0.01,
             far: 200,
             // position: [ - 0.16, 0.1, -1 ],
-            position: [3, 0, 0.5]
+            position: [4, 0, 0]
         }}
     >
-        <Experience />
+        <group rotation={[Math.PI/2, 0,0]} position={[0,1,0]}>
+            <Experience />
+        </group>
     </Canvas>
 );

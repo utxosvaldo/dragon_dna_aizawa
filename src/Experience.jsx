@@ -18,6 +18,21 @@ function index2Color(index) {
     return seq2Color[sel]
 }
 
+function randomPointOnSphere(r) {
+    // Generate a random value for theta between 0 and 2*pi
+    const theta = Math.random() * 2 * Math.PI;
+    
+    // Generate a random value for phi using the formula phi = acos(1 - 2 * u)
+    const u = Math.random();
+    const phi = Math.acos(1 - 2 * u);
+    
+    // Convert spherical coordinates to Cartesian coordinates
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
+    return [x,y,z]
+}
+
 function genRandomCylinder(r, L, zOffset=0){
     // Generate a random z-coordinate uniformly between -L/2 and L/2 and apply the z-offset
     const z = Math.random() * L - L / 2 + zOffset;
@@ -66,9 +81,9 @@ export default function Experience()
 
     return (
         <>
-            <Perf position='top-left' />
+            {/* <Perf position='top-left' /> */}
 
-            <OrbitControls makeDefault target={[0, 0, 0.5]} />
+            <OrbitControls makeDefault target={[0, 0.5, 0]} />
             <sphereGeometry ref={setSphereGeometry} />
 
             <directionalLight position={[1, 2, 3]} intensity={4.5} />
@@ -100,7 +115,8 @@ export default function Experience()
                         ref={element => (spheres.current[index] = element)}
                         key={index}
                         geometry={sphereGeometry}
-                        position={genRandomCylinder(0.5, 2, 0.5)}
+                        position={genRandomCylinder(0.6, 2, 0.5)}
+                        // position={randomPointOnSphere(1)}
                         scale={0.005}
                     >
                         <meshStandardMaterial color={index2Color(index)} />

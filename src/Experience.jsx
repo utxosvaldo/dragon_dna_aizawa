@@ -48,6 +48,7 @@ export default function Experience()
     const [a, b, c, d, e, f] = [0.95, 0.7, 0.6, 3.5, 0.25, 0.1]
     const dt = 0.01
 
+
     useFrame((state, delta) => {
         for(const sphere of spheres.current){
             const [x, y, z] = sphere.position
@@ -56,9 +57,9 @@ export default function Experience()
             const dy = d * x + (z - b) * y;
             const dz = c + (a * z) - (z ** 3) / 3 - (x**2 + y**2) * (1 + e * z) + f * z * x ** 3
 
-            sphere.position.x = x + dx * delta/2
-            sphere.position.y = y + dy * delta/2
-            sphere.position.z = z + dz * delta/2
+            sphere.position.x = x + dx * dt
+            sphere.position.y = y + dy * dt
+            sphere.position.z = z + dz * dt
         }
     })
 
@@ -99,12 +100,7 @@ export default function Experience()
                         ref={element => (spheres.current[index] = element)}
                         key={index}
                         geometry={sphereGeometry}
-                        // position={[
-                        //     (Math.random() - 0.5) * 1,
-                        //     (Math.random() - 0.5) * 1,
-                        //     Math.random() * 0.5
-                        // ]}
-                        position={genRandomCylinder(1, 2, -0.5)}
+                        position={genRandomCylinder(0.5, 2, 0.5)}
                         scale={0.005}
                     >
                         <meshStandardMaterial color={index2Color(index)} />

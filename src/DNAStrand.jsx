@@ -22,6 +22,30 @@ function every4Color(index){
     }
 }
 
+const seq =
+    'ATGAGCCGTTCCGTGACCTTTTCAAGTCGTAGCGCTGCAATGCCTGGAATTTCTCAGGTCAGGGTCTCAACCGTCTCATCCAGCAGGGGCGTGGGCGGGGGAGCTGGGGTGGGCAGGGCTGATGGATTCGGCTCCTCTAGCTTGTATTCACTGGGCTCCAGCAGTAAACGTGAGAGCCCTATTGTTCGCGGATCATCTTATTCCGTTAGAAGTGGCTTCGGCTATGGTGGGAACTTGAACGCAGGACTCGGAATCGGGCTTCGCTCCGGAGGTATCCAGGAAGTAACTATTAACCCTAATCTGTTGGCACCTCTCAATCTGGAAATCGATCCCACCATGCAAAAAGTTAGGCAGGAGGAGAAGGAACAGATAAAAACTCTGAATAACAAGTTTGCAAGTTTTATAGATAAAGTCAGGTTTCTGGAACAACAAAATAAAATGCTCGAGACCAAATGGTCTCTCCTTCAAGATCAGAAAACAGCAAGGTCCAATATAGCACCTCTCTTCGAGGCATACATCAATAACCTTCGCCGCCAACTTGATGGACTGATGAATGATAAGGGGCGCTTGGAGGGAGAACTGAAAAATATGCAAGATCTTGTGGAAGATTTCAAGAACAAATACGAGGATGAAATCAATAGGAGGACTACAGCAGAGAACGAATTTGTCGTTCTGAAGAAAGACGTGGATGGCGCCTATATGAACAAAGTTGAACTGGAGGCCAAAGTTGACGCCCTTACCGACGAAATCCTGTATGAAGCCGAGCTTCGTGAGCTTCAGGCCCAGATCTCCGACACATCTGTAGTACTCTCTATGGACAATAGCCGTAATCTTGATCTCGACTCAATCATTGCAGAAGTAAAAGCACAATATGAAGACATTGCCAATAGATCCAGAGCTGAGGCTGAGAGTTGGTATCAAAGCAAATTTGAAGCATTGCAAGTTACAGCTGGTAAACATGGGGATGATTTGCGTAACACAAAAAATGAGATTACAGAAATTAACAGGGTCATACAGAGACTTCAGGGGGAGATCGAGAATGCAAAGGCTCAGCGCGCAAAAATGGAGGCCGCAATTGCAGAGGCCGAAGAGAGAGGCGAGCTTGCCGTCAAGGACGCACGCGCCAAACTCGAAGAGCTTGAGGCCGCATTGCAAAAGGCCAAGCAGGATATGGCTCGTCAATTGAGGGAATATCAGGAGCTGATGAACGTGAAGTTGGCTCTGGACATCGAAATCGCAACCTATCGCAAGCTTCTGGAGGGCGAAGAGTCCAGACTTGCCGGCGATGGCGTGGGTTCCGTAAATATATCTATGGTTAGCTCATCTGGTGGAGGATCTTCCGGCTTTCTCGGTGGTGGAGTTAGGGGCGGTTTGGCTCTTGGTGCAGGTATGGGATCCGGAGCACTGGGTTTCAGCAGCGGAGGTTCCACTAAGTCATATACAGTTACAACCACTTCTTCAACTCGTTCCTTTCGTAAA';
+
+const seq2Color = {
+    A: "green",
+    T: "deepPink",
+    G: "blue",
+    C: "red"
+}
+
+const seq2ColorInverted = {
+    A: seq2Color['T'],
+    T: seq2Color['A'],
+    G: seq2Color['C'],
+    C: seq2Color['G']
+};
+
+function index2SeqColor(index) {
+    return seq2Color[seq[index]]
+}
+function index2SeqColorInverted(index) {
+
+    return seq2ColorInverted[seq[index]];
+}
 
 export default function DNAStrand(){
     const baseASphere = useRef()
@@ -29,11 +53,11 @@ export default function DNAStrand(){
     const t = 10 // tiempo en recorrer de un lado a otro
     const n = 200 // segmentos de linea para las helices
     const l = 2 // longitud a recorrer
-    const nGroves = 4 // numero de groves 
+    const nGroves = 10 // numero de groves 
 
     const nBases = 10 * nGroves // Number of base pairs total along L
 
-    const r = 0.1
+    const r = 0.15
     const omegaStrand = - (2 * Math.PI) * nGroves / l
     const alpha = 0
     const beta = 2.4
@@ -41,7 +65,7 @@ export default function DNAStrand(){
     const z0 = -0.5
 
     // rotational velocity of dna strand
-    const wZ = (2 * Math.PI * nGroves) / t ;
+    const wZ = 0.7 * (2 * Math.PI * nGroves) / t  ;
 
     // rotational velocity of bases
 
@@ -135,7 +159,7 @@ export default function DNAStrand(){
                         ]}
                         rotation={[0, 0, zAngle(pair)]}
                     >
-                        <meshStandardMaterial color={every4Color(index)} />
+                        <meshStandardMaterial color={index2SeqColor(index)} />
                     </mesh>
                 </group>
             ))}
@@ -159,7 +183,7 @@ export default function DNAStrand(){
                         ]}
                         rotation={[0, 0, zAngle(pair) - Math.PI]}
                     >
-                        <meshStandardMaterial color='blue' />
+                        <meshStandardMaterial color={index2SeqColorInverted(index)} />
                     </mesh>
                 </group>
             ))}
@@ -171,7 +195,7 @@ export default function DNAStrand(){
                         500, // tubular segments
                         0.01, // radius
                         100, //  radial segments
-                        false // closed
+                        // true // closed
                     ]}
                 >
                     <meshNormalMaterial />
@@ -183,7 +207,7 @@ export default function DNAStrand(){
                         500, // tubular segments
                         0.01, // radius
                         100, //  radial segments
-                        false // closed
+                        // true // closed
                     ]}
                 >
                     <meshNormalMaterial />

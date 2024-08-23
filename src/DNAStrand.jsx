@@ -14,14 +14,22 @@ function zAngle(pair) {
     return angleRadians + Math.PI/2
 }
 
+function every4Color(index){
+    if(index%10 == 0){
+        return 'blue'
+    } else {
+        return 'red'
+    }
+}
+
 
 export default function DNAStrand(){
     const baseASphere = useRef()
 
-    const t = 5 // tiempo en recorrer de un lado a otro
+    const t = 10 // tiempo en recorrer de un lado a otro
     const n = 200 // segmentos de linea para las helices
     const l = 2 // longitud a recorrer
-    const nGroves = 9 // numero de groves 
+    const nGroves = 4 // numero de groves 
 
     const nBases = 10 * nGroves // Number of base pairs total along L
 
@@ -31,6 +39,11 @@ export default function DNAStrand(){
     const beta = 2.4
     const v = l/n
     const z0 = -0.5
+
+    // rotational velocity of dna strand
+    const wZ = (2 * Math.PI * nGroves) / t ;
+
+    // rotational velocity of bases
 
     const strandAPoints = [...Array(n)].map((value, index) =>{
         return new THREE.Vector3(
@@ -63,23 +76,35 @@ export default function DNAStrand(){
     })
 
     const strandGroup = useRef()
+    const baseGroupA = useRef([])
+    const baseGroupB = useRef([]);
 
-    const wZ = 2 * Math.PI  * nGroves/t
 
     // base length scale and width scale
-    const baseLengthScale = 0.9 * r / 2 ;
+    const baseLengthScale =  r / 2 ;
     const baseWidthScale = baseLengthScale / 10;
-    const strandLineWidth = 20
 
-    const baseGroup = useRef()
+    const vBases = 0.5* l/t
 
     useFrame((status, delta) => {
-        // strandGroup.current.rotation.z += wZ * delta
+        const elapsedTime = status.clock.elapsedTime
+        // giramos doble helix
+        strandGroup.current.rotation.z = wZ * elapsedTime
+        // giramos las bases
 
-        // const z = ((status.clock.elapsedTime % t) * l / t) 
+        baseGroupA.current.map((baseGroup, index) => {
+            const z = z0 + (((index * l) / nBases + vBases * elapsedTime) % l);
+            baseGroup.rotation.z = - (2*Math.PI*nGroves*vBases*elapsedTime/l) + wZ * elapsedTime + alpha
+            baseGroup.children[0].position.z = z 
+        })
 
-        // baseGroup.current.position.z = z 
-        // baseGroup.current.rotation.z += wZ*delta
+        baseGroupB.current.map((baseGroup, index) => {
+            const z = z0 + (((index * l) / nBases + vBases * elapsedTime) % l);
+            baseGroup.rotation.z =
+                -((2 * Math.PI * nGroves * vBases * elapsedTime) / l) +
+                wZ * elapsedTime //+ beta;
+            baseGroup.children[0].position.z = z;
+        });
 
     })
 
@@ -91,68 +116,55 @@ export default function DNAStrand(){
         <>
             <sphereGeometry ref={setSphereGeometry} />
 
-            <group ref={baseGroup}>
-                <Sphere
-                    position={[
-                        (basePairs[0][0][0] * 3) / 4 + basePairs[0][1][0] / 4,
-                        (basePairs[0][0][1] * 3) / 4 + basePairs[0][1][1] / 4,
-                        basePairs[0][0][2]
-                    ]}
-                    scale={[baseWidthScale, baseLengthScale, baseWidthScale]}
-                    rotation={[0, 0, zAngle(basePairs[0])]}
-                >
-                    <meshNormalMaterial color={'red'} />
-                </Sphere>
-            </group>
-
             {[...basePairs].map((pair, index) => (
-                <mesh
-                    // ref={element => (spheres.current[index] = element)}
+                <group
+                    ref={element => (baseGroupA.current[index] = element)}
                     key={index}
-                    geometry={sphereGeometry}
-                    position={[
-                        (pair[0][0] * 3) / 4 + pair[1][0] / 4,
-                        (pair[0][1] * 3) / 4 + pair[1][1] / 4,
-                        pair[0][2]
-                    ]}
-                    scale={[baseWidthScale, baseLengthScale, baseWidthScale]}
-                    rotation={[0, 0, zAngle(pair)]}
                 >
-                    <meshStandardMaterial color='red' />
-                </mesh>
+                    <mesh
+                        geometry={sphereGeometry}
+                        position={[
+                            (pair[0][0] * 3) / 4 + pair[1][0] / 4,
+                            (pair[0][1] * 3) / 4 + pair[1][1] / 4,
+                            pair[0][2]
+                        ]}
+                        scale={[
+                            baseWidthScale,
+                            baseLengthScale,
+                            baseWidthScale
+                        ]}
+                        rotation={[0, 0, zAngle(pair)]}
+                    >
+                        <meshStandardMaterial color={every4Color(index)} />
+                    </mesh>
+                </group>
             ))}
 
             {[...basePairs].map((pair, index) => (
-                <mesh
-                    // ref={element => (spheres.current[index] = element)}
+                <group
+                    ref={element => (baseGroupB.current[index] = element)}
                     key={index}
-                    geometry={sphereGeometry}
-                    position={[
-                        (pair[1][0] * 3) / 4 + pair[0][0] / 4,
-                        (pair[1][1] * 3) / 4 + pair[0][1] / 4,
-                        pair[0][2]
-                    ]}
-                    scale={[baseWidthScale, baseLengthScale, baseWidthScale]}
-                    rotation={[0, 0, zAngle(pair)]}
                 >
-                    <meshStandardMaterial color='blue' />
-                </mesh>
+                    <mesh
+                        geometry={sphereGeometry}
+                        position={[
+                            (pair[1][0] * 3) / 4 + pair[0][0] / 4,
+                            (pair[1][1] * 3) / 4 + pair[0][1] / 4,
+                            pair[0][2]
+                        ]}
+                        scale={[
+                            baseWidthScale,
+                            baseLengthScale,
+                            baseWidthScale
+                        ]}
+                        rotation={[0, 0, zAngle(pair) - Math.PI]}
+                    >
+                        <meshStandardMaterial color='blue' />
+                    </mesh>
+                </group>
             ))}
 
             <group ref={strandGroup}>
-                {/* <Line
-                    points={strandAPoints}
-                    color={'blue'}
-                    lineWidth={strandLineWidth}
-                    resolution={
-                        new THREE.Vector2(window.innerWidth, window.innerHeight)
-                    }
-                /> */}
-                {/* <Line
-                    points={strandBPoints}
-                    color={'red'}
-                    lineWidth={strandLineWidth}
-                /> */}
                 <Tube
                     args={[
                         new THREE.CatmullRomCurve3(strandBPoints), //path
@@ -176,19 +188,6 @@ export default function DNAStrand(){
                 >
                     <meshNormalMaterial />
                 </Tube>
-
-                {/* <mesh>
-                    <tubeGeometry
-                        args={[
-                            new THREE.CatmullRomCurve3(strandBPoints), //path
-                            20, // tubular segments
-                            0.1, // radius
-                            8, //  radial segments
-                            false // closed
-                        ]}
-                    />
-                    <meshNormalMaterial />
-                </mesh> */}
             </group>
         </>
     );

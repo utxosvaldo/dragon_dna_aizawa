@@ -5,7 +5,7 @@ import Experience from './Experience.jsx'
 import { onDoubleClick } from './Experience.jsx';
 
 const root = ReactDOM.createRoot(document.querySelector('#root'))
-
+console.log("By @UTXOz - Osvaldo Rosales Perez 24/08/2024")
 root.render(
     <Canvas
         camera={{

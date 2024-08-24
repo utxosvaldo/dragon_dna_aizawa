@@ -110,7 +110,41 @@ export default function DNAStrand(){
 
     const vBases = 0.5* l/t
 
+
+    let framesSinceLastRestart = 0;
+    let trailSteps = 5;
+    let firstRenderComplete = false;
+
     useFrame((status, delta) => {
+
+        if (!firstRenderComplete) {
+            if (framesSinceLastRestart < trailSteps * 11) {
+                framesSinceLastRestart += 1;
+
+                baseGroupA.current.map((baseGroup, index) => {
+                    baseGroup.children[0].visible = false;
+                });
+                baseGroupB.current.map((baseGroup, index) => {
+                    baseGroup.children[0].visible = false;
+                });
+                strandGroup.current.children.map((tubeMesh, index) => {
+                    tubeMesh.visible = false;
+                });
+                return;
+            } else {
+                baseGroupA.current.map((baseGroup, index) => {
+                    baseGroup.children[0].visible = true;
+                });
+                baseGroupB.current.map((baseGroup, index) => {
+                    baseGroup.children[0].visible = true;
+                });
+                strandGroup.current.children.map((tubeMesh, index) => {
+                    tubeMesh.visible = true;
+                });
+                firstRenderComplete = true;
+            }
+        }
+
         const elapsedTime = status.clock.elapsedTime
         // giramos doble helix
         strandGroup.current.rotation.z = wZ * elapsedTime
